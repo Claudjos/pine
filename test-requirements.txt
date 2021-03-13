@@ -1,3 +1,4 @@
 ddt
 pytest
 pytest-coverage
+pyyaml
