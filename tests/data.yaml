@@ -1,0 +1,152 @@
+# Tests there are no books
+
+- request:
+    method: GET
+    url: /books
+  response:
+    status: 200
+    headers:
+      content-type: text/event-stream
+
+# Creates a new book
+
+- request:
+    method: GET
+    url: /books/1
+  response:
+    status: 404
+
+- request:
+    method: POST
+    url: /books
+    body:
+      title: My title
+      author: some guy
+  response:
+    status: 201
+    headers:
+      content-type: application/json
+    body:
+      book_id: 1
+
+- request:
+    method: GET
+    url: /books/1
+  response:
+    status: 200
+    headers:
+      content-type: application/json
+    body:
+      title: My title
+      author: some guy
+
+# Updates the book and verify changes
+
+- request:
+    method: PUT
+    url: /books/1
+    headers:
+      content-type: application/json
+    body:
+      title: New title
+  response:
+    status: 200
+
+- request:
+    method: GET
+    url: /books/1
+  response:
+    status: 200
+    body:
+      title: New title
+
+# Patch the book and verify changes
+
+- request:
+    method: PATCH
+    url: /books/1
+    body: title=Fancy%20Title&author=Cool%20Guy
+  response:
+    status: 200
+
+- request:
+    method: GET
+    url: /books/1
+  response:
+    status: 200
+    body:
+      title: Fancy Title
+      author: Cool Guy
+
+# creates a sencond book
+
+- request:
+    method: POST
+    url: /books
+    body:
+      title: My title 2
+      author: some other guy
+  response:
+    status: 201
+    headers:
+      content-type: application/json
+    body:
+      book_id: 2
+
+- request:
+    method: GET
+    url: /books
+  response:
+    status: 200
+    headers:
+      content-type: text/event-stream
+    body: 'event: book
+
+    data: {"title": "Fancy Title", "author": "Cool Guy"}
+
+
+    event: book
+
+    data: {"title": "My title 2", "author": "some other guy"}
+
+
+    '
+
+# Deletes a book and verify it happened
+
+- request:
+    method: DELETE
+    url: /books/1
+  response:
+    status: 200
+
+- request:
+    method: DELETE
+    url: /books/1
+  response:
+    status: 404
+
+- request:
+    method: GET
+    url: /books/1
+  response:
+    status: 404
+
+# Tests method not allowed and 404
+- request:
+    method: DELETE
+    url: /books
+  response:
+    status: 405
+
+- request:
+    method: CONNECT
+    url: /books
+  response:
+    status: 405
+
+- request:
+    method: DELETE
+    url: /info
+  response:
+    status: 404
