@@ -1,7 +1,7 @@
 # Pine Web Framework
 
 ## Overview
-This is a very simple web framework compatible with WSGI. Written for fun and self education.
+This is a very simple web framework WSGI compatible. Written for fun and self education.
 
 ## Develop your Web App using Pine
 Checkout the [examples](examples) to learn how to develop your app.
