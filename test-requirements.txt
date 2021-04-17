@@ -2,3 +2,4 @@ ddt
 pytest
 pytest-coverage
 pyyaml
+pyfir

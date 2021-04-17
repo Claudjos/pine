@@ -2,7 +2,7 @@
 
 - request:
     method: GET
-    url: /books
+    uri: /books
   response:
     status: 200
     headers:
@@ -12,13 +12,13 @@
 
 - request:
     method: GET
-    url: /books/1
+    uri: /books/1
   response:
     status: 404
 
 - request:
     method: POST
-    url: /books
+    uri: /books
     body:
       title: My title
       author: some guy
@@ -31,7 +31,7 @@
 
 - request:
     method: GET
-    url: /books/1
+    uri: /books/1
   response:
     status: 200
     headers:
@@ -44,7 +44,7 @@
 
 - request:
     method: PUT
-    url: /books/1
+    uri: /books/1
     headers:
       content-type: application/json
     body:
@@ -54,7 +54,7 @@
 
 - request:
     method: GET
-    url: /books/1
+    uri: /books/1
   response:
     status: 200
     body:
@@ -64,14 +64,14 @@
 
 - request:
     method: PATCH
-    url: /books/1
+    uri: /books/1
     body: title=Fancy%20Title&author=Cool%20Guy
   response:
     status: 200
 
 - request:
     method: GET
-    url: /books/1
+    uri: /books/1
   response:
     status: 200
     body:
@@ -82,7 +82,7 @@
 
 - request:
     method: POST
-    url: /books
+    uri: /books
     body:
       title: My title 2
       author: some other guy
@@ -95,7 +95,7 @@
 
 - request:
     method: GET
-    url: /books
+    uri: /books
   response:
     status: 200
     headers:
@@ -116,37 +116,37 @@
 
 - request:
     method: DELETE
-    url: /books/1
+    uri: /books/1
   response:
     status: 200
 
 - request:
     method: DELETE
-    url: /books/1
+    uri: /books/1
   response:
     status: 404
 
 - request:
     method: GET
-    url: /books/1
+    uri: /books/1
   response:
     status: 404
 
 # Tests method not allowed and 404
 - request:
     method: DELETE
-    url: /books
+    uri: /books
   response:
     status: 405
 
 - request:
     method: CONNECT
-    url: /books
+    uri: /books
   response:
     status: 405
 
 - request:
     method: DELETE
-    url: /info
+    uri: /info
   response:
     status: 404

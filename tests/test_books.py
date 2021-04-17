@@ -1,11 +1,12 @@
 import unittest
 from ddt import ddt, file_data
-from pine.testing import PineClient
 from examples.books import app
 from json import dumps, loads
+from fir.wsgi import Client
+from fir.http import Request
 
 
-client = PineClient(app)
+client = Client(app)
 
 
 @ddt
@@ -23,14 +24,14 @@ class TestCases(unittest.TestCase):
 				raise ValueError("Invalid type for request body.\
 					Accepted type are: str, list and dict")
 		
-		res = client.request(**request)
-		
+		res = client.request(Request(**request))
+
 		if "status" in response:
 			assert res.status_code == response["status"]
 		if "headers" in response:
 			assert res.headers == response["headers"]
 		if "body" in response:
 			if isinstance(response["body"], str):
-				assert response["body"] == res.text
+				assert response["body"] == res.get_body().decode()
 			else:
-				assert response["body"] == res.json
+				assert response["body"] == loads(res.get_body().decode())
