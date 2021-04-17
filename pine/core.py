@@ -125,7 +125,7 @@ class App:
 		return self.wsgi(environ, start_response)
 
 	def wsgi(self, environ, start_response):
-		request = Request.from_wsgi(environ)
+		request = Request.from_wsgi_environ(environ)
 		response = self.process(environ, request)
 		start_response(
 			f"{response.status_code} {response.status_message}",

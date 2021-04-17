@@ -4,7 +4,7 @@ requests and responses, with methods to parse/convert
 messages from/to wsgi format.
 """
 
-from json import loads, dumps
+from json import dumps
 from urllib.parse import parse_qs
 from typing import Iterator
 from types import GeneratorType
@@ -70,7 +70,4 @@ class Response(HTTPMessage, http.Response):
 
 
 class Request(HTTPMessage, http.Request):
-
-	@classmethod
-	def from_wsgi(cls, environ: dict):
-		return wsgi.environ_to_request(environ, cls)
+	pass
