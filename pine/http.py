@@ -89,58 +89,7 @@ class Response(HTTPMessage, http.Response):
 		return x()
 
 
-class Request(HTTPMessage):
-	
-	def __init__(self, method, uri, raw_uri, raw_query, **kwargs):
-		super().__init__(**kwargs)
-		self.method = method
-		self.uri = uri
-		self.raw_uri = raw_uri
-		self.query_params = parse_qs(raw_query)
-
-	@property
-	def request_line(self):
-		return f"{self.method} {self.raw_uri} {self.version}"
-
-	@property
-	def uri(self):
-		return self._uri
-	
-	@uri.setter
-	def uri(self, value):
-		self._uri = value
-
-	@property
-	def raw_uri(self):
-		return self._raw_uri
-
-	@raw_uri.setter
-	def raw_uri(self, value):
-		self._raw_uri = value
-
-	@property
-	def route_params(self):
-		return self._route_params
-
-	@route_params.setter
-	def route_params(self, value):
-		self._route_params = value
-
-	@property
-	def query_params(self):
-		return self._query_params
-
-	@query_params.setter
-	def query_params(self, value):
-		self._query_params = value
-
-	@property
-	def method(self):
-		return self._method
-
-	@method.setter
-	def method(self, value):
-		self._method = value
+class Request(HTTPMessage, http.Request):
 
 	@classmethod
 	def from_wsgi(cls, environ: dict):
@@ -157,9 +106,7 @@ class Request(HTTPMessage):
 			request_body_size = 0
 		return cls(
 			method=environ["REQUEST_METHOD"].upper(),
-			uri=environ["PATH_INFO"],
-			raw_uri=environ["RAW_URI"],
-			raw_query=environ["QUERY_STRING"],
+			uri=environ["RAW_URI"],
 			headers=headers,
 			body=environ['wsgi.input'].read(request_body_size)
 		)

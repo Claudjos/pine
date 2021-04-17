@@ -101,7 +101,7 @@ class Router:
 
 	def get_handler(self, request: Request) -> RequestHandler:
 		for rule in self._rules:
-			result = rule[0].match(request.uri)
+			result = rule[0].match(request.path)
 			if result is not None:
 				request.route_params = dict(zip(rule[2], result.groups()))
 				return rule[1]
