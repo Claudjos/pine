@@ -8,60 +8,28 @@ from json import loads, dumps
 from urllib.parse import parse_qs
 from typing import Iterator
 from types import GeneratorType
+from fir import http
 
 
-class HTTPMessage:
+class HTTPMessage(http.Message):
 
-	def __init__(self, version = "HTTP/1.1", headers = None, body = None):
-		self.version = version
-		self.headers = headers if headers is not None else {}
-		self.body = body if body is not None else b''
-		if isinstance(self.body, (str)):
-			self.body = self.body.encode()
-		if isinstance(self.body, (dict, list)):
-			self.body = dumps(self.body).encode()
+	def set_body(self, value):
+		if isinstance(value, (list, dict)):
+			value = dumps(value)
 			self.headers.setdefault("content-type", "application/json")
-
-	@property
-	def version(self):
-		return self._version
-
-	@version.setter
-	def version(self, value):
-		self._version = value
-	
-	@property
-	def headers(self):
-		return self._headers
-
-	@headers.setter
-	def headers(self, value):
-		self._headers = value
-
-	@property
-	def body(self):
-		return self._body
-
-	@body.setter
-	def body(self, value):
-		self._body = value
+		super().set_body(value)
 
 	@property
 	def content_type(self):
-		return self._headers.get("content-type", None)
+		return self.headers.get("content-type", None)
 
 	@property
 	def json(self):
-		return loads(self.body)
+		return loads(self.text)
 
 	@property
 	def text(self):
-		if isinstance(self.body, bytes):
-			return self.body.decode()
-		elif isinstance(self.body, str):
-			return self.body
-		else:
-			raise ValueError("Body must be instance of bytes or str to use this method")
+		return self.get_body().decode()
 
 	@property
 	def form(self):
