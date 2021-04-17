@@ -8,7 +8,7 @@ from json import loads, dumps
 from urllib.parse import parse_qs
 from typing import Iterator
 from types import GeneratorType
-from fir import http
+from fir import http, wsgi
 
 
 class HTTPMessage(http.Message):
@@ -25,7 +25,7 @@ class HTTPMessage(http.Message):
 
 	@property
 	def json(self):
-		return loads(self.text)
+		return self.get_json()
 
 	@property
 	def text(self):
@@ -37,26 +37,6 @@ class HTTPMessage(http.Message):
 
 
 class Response(HTTPMessage, http.Response):
-
-	STATUS_MESSAGES = {
-		200: "OK",
-		201: "Created",
-		204: "No Content",
-		301: "Moved Permanently",
-		302: "Found",
-		401: "Unauthorized",
-		403: "Forbidden",
-		404: "Not Found",
-		405: "Method Not Allowed",
-		500: "Internal Server Error"
-	}
-
-	def __init__(self, status_code: int = 200, status_message: str = None, 
-		headers: dict = None, body: bytes = None
-	):
-		if status_message is None:
-			status_message = self.STATUS_MESSAGES.get(status_code, " ")
-		super().__init__(status_code, status_message, headers, body)
 
 	@property
 	def wsgi_body(self):
@@ -93,20 +73,4 @@ class Request(HTTPMessage, http.Request):
 
 	@classmethod
 	def from_wsgi(cls, environ: dict):
-		"""
-		Build a Request instance from a wsgi environ.
-		"""
-		headers = {}
-		for key in environ:
-			if key.startswith("HTTP_"):
-				headers[key.replace("HTTP_", "").replace("_", "-").lower()] = environ[key]
-		try:
-			request_body_size = int(environ.get('CONTENT_LENGTH', 0))
-		except (ValueError):
-			request_body_size = 0
-		return cls(
-			method=environ["REQUEST_METHOD"].upper(),
-			uri=environ["RAW_URI"],
-			headers=headers,
-			body=environ['wsgi.input'].read(request_body_size)
-		)
+		return wsgi.environ_to_request(environ, cls)
