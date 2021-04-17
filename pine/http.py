@@ -36,7 +36,7 @@ class HTTPMessage(http.Message):
 		return parse_qs(self.body.decode())
 
 
-class Response(HTTPMessage):
+class Response(HTTPMessage, http.Response):
 
 	STATUS_MESSAGES = {
 		200: "OK",
@@ -51,30 +51,12 @@ class Response(HTTPMessage):
 		500: "Internal Server Error"
 	}
 
-	def __init__(self, status_code=200, status_message=None, **kwargs):
-		super().__init__(**kwargs)
-		self.status_code = status_code
-		self.status_message = status_message if status_message is not None else Response.STATUS_MESSAGES.get(status_code, "")
-
-	@property
-	def response_line(self):
-		return f"{self.version} {self.status_code} {self.status_message}"
-	
-	@property
-	def status_message(self):
-		return self._status_message
-
-	@status_message.setter
-	def status_message(self, value):
-		self._status_message = value
-
-	@property
-	def status_code(self):
-		return self._status_code
-
-	@status_code.setter
-	def status_code(self, value):
-		self._status_code = value
+	def __init__(self, status_code: int = 200, status_message: str = None, 
+		headers: dict = None, body: bytes = None
+	):
+		if status_message is None:
+			status_message = self.STATUS_MESSAGES.get(status_code, " ")
+		super().__init__(status_code, status_message, headers, body)
 
 	@property
 	def wsgi_body(self):
